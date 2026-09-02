@@ -1,0 +1,452 @@
+# ============================================================
+# CLOUD-BASED COLLEGE EVENT REGISTRATION SYSTEM
+# SaaS Demonstration - Complete Python Implementation
+# ============================================================
+
+from datetime import datetime
+from collections import Counter
+
+# ------------------------------------------------------------
+# DATA STORAGE
+# ------------------------------------------------------------
+
+registrations = []
+
+
+# ------------------------------------------------------------
+# REGISTER STUDENT
+# ------------------------------------------------------------
+
+def register_student():
+    print("\n" + "=" * 55)
+    print("        COLLEGE EVENT REGISTRATION")
+    print("=" * 55)
+
+    name = input("Student Name       : ").strip()
+    reg_no = input("Register Number    : ").strip()
+    department = input("Department         : ").strip().upper()
+    year = input("Year (1/2/3/4)     : ").strip()
+    event = input("Event Name         : ").strip()
+    participation = input(
+        "Participation Type (Participant/Volunteer/Organizer): "
+    ).strip().title()
+    contact = input("Contact Details    : ").strip()
+
+    # Validation
+    if not name or not reg_no or not department or not event or not contact:
+        print("\nERROR: All fields are required.")
+        return
+
+    if year not in ["1", "2", "3", "4"]:
+        print("\nERROR: Year must be 1, 2, 3 or 4.")
+        return
+
+    valid_types = ["Participant", "Volunteer", "Organizer"]
+
+    if participation not in valid_types:
+        print("\nERROR: Invalid participation type.")
+        return
+
+    # Duplicate registration check
+    for record in registrations:
+        if (record["Register Number"] == reg_no and
+                record["Event Name"].lower() == event.lower() and
+                record["Registration Status"] != "Cancelled"):
+
+            print("\nERROR: Student is already registered for this event.")
+            return
+
+    # Create registration record
+    record = {
+        "Student Name": name,
+        "Register Number": reg_no,
+        "Department": department,
+        "Year": year,
+        "Event Name": event,
+        "Participation Type": participation,
+        "Contact Details": contact,
+        "Registration Date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+        "Registration Status": "Registered"
+    }
+
+    registrations.append(record)
+
+    print("\nRegistration successful!")
+    print("Registration Date :", record["Registration Date"])
+    print("Status             :", record["Registration Status"])
+
+
+# ------------------------------------------------------------
+# DISPLAY ALL REGISTRATIONS
+# ------------------------------------------------------------
+
+def display_registrations():
+
+    print("\n" + "=" * 120)
+    print("                    ALL REGISTRATIONS")
+    print("=" * 120)
+
+    if not registrations:
+        print("No registrations available.")
+        return
+
+    for i, r in enumerate(registrations, start=1):
+
+        print(f"\nRegistration #{i}")
+        print("-" * 50)
+
+        for key, value in r.items():
+            print(f"{key:<22}: {value}")
+
+
+# ------------------------------------------------------------
+# TOTAL REGISTRATIONS
+# ------------------------------------------------------------
+
+def total_registrations():
+
+    total = len([
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ])
+
+    print("\n" + "=" * 55)
+    print("              TOTAL REGISTRATIONS")
+    print("=" * 55)
+
+    print(f"\nTotal Registrations : {total}")
+
+
+# ------------------------------------------------------------
+# EVENT-WISE REGISTRATIONS
+# ------------------------------------------------------------
+
+def event_wise_report():
+
+    print("\n" + "=" * 55)
+    print("             EVENT-WISE REGISTRATIONS")
+    print("=" * 55)
+
+    active = [
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ]
+
+    if not active:
+        print("\nNo registration data available.")
+        return
+
+    event_count = Counter(
+        r["Event Name"] for r in active
+    )
+
+    for event, count in event_count.most_common():
+
+        print(f"{event:<30} : {count}")
+
+
+# ------------------------------------------------------------
+# DEPARTMENT-WISE PARTICIPATION
+# ------------------------------------------------------------
+
+def department_wise_report():
+
+    print("\n" + "=" * 55)
+    print("          DEPARTMENT-WISE PARTICIPATION")
+    print("=" * 55)
+
+    active = [
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ]
+
+    if not active:
+        print("\nNo registration data available.")
+        return
+
+    department_count = Counter(
+        r["Department"] for r in active
+    )
+
+    for department, count in department_count.most_common():
+
+        print(f"{department:<30} : {count}")
+
+
+# ------------------------------------------------------------
+# PARTICIPATION TYPE REPORT
+# ------------------------------------------------------------
+
+def participation_type_report():
+
+    print("\n" + "=" * 55)
+    print("          PARTICIPATION TYPE REPORT")
+    print("=" * 55)
+
+    active = [
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ]
+
+    if not active:
+        print("\nNo registration data available.")
+        return
+
+    type_count = Counter(
+        r["Participation Type"] for r in active
+    )
+
+    for participation_type, count in type_count.most_common():
+
+        print(f"{participation_type:<30} : {count}")
+
+
+# ------------------------------------------------------------
+# MOST POPULAR EVENT
+# ------------------------------------------------------------
+
+def most_popular_event():
+
+    print("\n" + "=" * 55)
+    print("               MOST POPULAR EVENT")
+    print("=" * 55)
+
+    active = [
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ]
+
+    if not active:
+        print("\nNo registration data available.")
+        return
+
+    event_count = Counter(
+        r["Event Name"] for r in active
+    )
+
+    event, count = event_count.most_common(1)[0]
+
+    print(f"\nMost Popular Event : {event}")
+    print(f"Registrations      : {count}")
+
+
+# ------------------------------------------------------------
+# SIMPLE BAR CHART
+# ------------------------------------------------------------
+
+def simple_chart():
+
+    print("\n" + "=" * 55)
+    print("             EVENT REGISTRATION CHART")
+    print("=" * 55)
+
+    active = [
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ]
+
+    if not active:
+        print("\nNo registration data available.")
+        return
+
+    event_count = Counter(
+        r["Event Name"] for r in active
+    )
+
+    for event, count in event_count.most_common():
+
+        bar = "#" * count
+
+        print(f"\n{event}")
+        print(f"{bar} ({count})")
+
+
+# ------------------------------------------------------------
+# SEARCH REGISTRATION
+# ------------------------------------------------------------
+
+def search_registration():
+
+    print("\n" + "=" * 55)
+    print("             SEARCH REGISTRATION")
+    print("=" * 55)
+
+    reg_no = input("\nEnter Register Number: ").strip()
+
+    found = False
+
+    for r in registrations:
+
+        if r["Register Number"] == reg_no:
+
+            found = True
+
+            print("\nRegistration Found")
+            print("-" * 40)
+
+            for key, value in r.items():
+                print(f"{key:<22}: {value}")
+
+    if not found:
+        print("\nNo registration found.")
+
+
+# ------------------------------------------------------------
+# CANCEL REGISTRATION
+# ------------------------------------------------------------
+
+def cancel_registration():
+
+    print("\n" + "=" * 55)
+    print("             CANCEL REGISTRATION")
+    print("=" * 55)
+
+    reg_no = input("\nRegister Number: ").strip()
+    event = input("Event Name     : ").strip()
+
+    for r in registrations:
+
+        if (r["Register Number"] == reg_no and
+                r["Event Name"].lower() == event.lower() and
+                r["Registration Status"] == "Registered"):
+
+            r["Registration Status"] = "Cancelled"
+
+            print("\nRegistration cancelled successfully.")
+            return
+
+    print("\nRegistration not found.")
+
+
+# ------------------------------------------------------------
+# DASHBOARD
+# ------------------------------------------------------------
+
+def dashboard():
+
+    active = [
+        r for r in registrations
+        if r["Registration Status"] != "Cancelled"
+    ]
+
+    print("\n")
+    print("=" * 65)
+    print("             COLLEGE EVENT DASHBOARD")
+    print("=" * 65)
+
+    total = len(active)
+
+    print(f"\nTotal Registrations       : {total}")
+
+    if active:
+
+        events = Counter(r["Event Name"] for r in active)
+        departments = Counter(r["Department"] for r in active)
+        types = Counter(r["Participation Type"] for r in active)
+
+        popular_event, popular_count = events.most_common(1)[0]
+
+        print(f"Most Popular Event        : {popular_event}")
+        print(f"Popular Event Registrants : {popular_count}")
+        print(f"Departments Participating : {len(departments)}")
+        print(f"Events Available          : {len(events)}")
+
+        print("\nEvent-wise Summary")
+        print("-" * 40)
+
+        for event, count in events.most_common():
+            print(f"{event:<25} {count}")
+
+        print("\nDepartment-wise Summary")
+        print("-" * 40)
+
+        for dept, count in departments.most_common():
+            print(f"{dept:<25} {count}")
+
+        print("\nParticipation Summary")
+        print("-" * 40)
+
+        for ptype, count in types.most_common():
+            print(f"{ptype:<25} {count}")
+
+    else:
+        print("\nNo active registrations.")
+
+
+# ------------------------------------------------------------
+# MAIN MENU
+# ------------------------------------------------------------
+
+def main():
+
+    while True:
+
+        print("\n")
+        print("=" * 65)
+        print("       CLOUD-BASED COLLEGE EVENT REGISTRATION SYSTEM")
+        print("=" * 65)
+
+        print("""
+1. Register Student
+2. View All Registrations
+3. Total Registrations
+4. Event-wise Registrations
+5. Department-wise Participation
+6. Participation Type Report
+7. Most Popular Event
+8. Simple Event Chart
+9. Search Registration
+10. Cancel Registration
+11. Dashboard
+0. Exit
+""")
+
+        choice = input("Enter your choice: ").strip()
+
+        if choice == "1":
+            register_student()
+
+        elif choice == "2":
+            display_registrations()
+
+        elif choice == "3":
+            total_registrations()
+
+        elif choice == "4":
+            event_wise_report()
+
+        elif choice == "5":
+            department_wise_report()
+
+        elif choice == "6":
+            participation_type_report()
+
+        elif choice == "7":
+            most_popular_event()
+
+        elif choice == "8":
+            simple_chart()
+
+        elif choice == "9":
+            search_registration()
+
+        elif choice == "10":
+            cancel_registration()
+
+        elif choice == "11":
+            dashboard()
+
+        elif choice == "0":
+            print("\nThank you for using the system!")
+            break
+
+        else:
+            print("\nInvalid choice. Please try again.")
+
+
+# ------------------------------------------------------------
+# START PROGRAM
+# ------------------------------------------------------------
+
+if __name__ == "__main__":
+    main()
